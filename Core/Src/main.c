@@ -66,7 +66,6 @@ static void MX_TIM2_Init(void);
   */
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
   char buffer[20]; // Buffer để lưu chuỗi ký tự
   /* USER CODE END 1 */
@@ -102,6 +101,8 @@ int main(void)
 
   // Hiển thị tiêu đề ban đầu trên LCD
   CLCD_I2C_SetCursor(&myLCD, 0, 0);
+  CLCD_I2C_WriteString(&myLCD, "Object: ");
+  CLCD_I2C_SetCursor(&myLCD, 0, 1);
   CLCD_I2C_WriteString(&myLCD, "Distance: ");
   /* USER CODE END 2 */
 
@@ -115,15 +116,21 @@ int main(void)
     // Lấy giá trị khoảng cách từ cảm biến
     uint8_t distance = get_distance();
 
-    // Chuyển đổi khoảng cách thành chuỗi
-    sprintf(buffer, "%3d cm    ", distance);
+    // Xác định trạng thái vật cản
+    uint8_t object_detected = (distance < 50 && distance != 0) ? 1 : 0;
 
-    // Hiển thị khoảng cách trên LCD
-    CLCD_I2C_SetCursor(&myLCD, 10, 0);
+    // Hiển thị trạng thái vật cản trên LCD
+    CLCD_I2C_SetCursor(&myLCD, 8, 0);
+    sprintf(buffer, "%d", object_detected);
+    CLCD_I2C_WriteString(&myLCD, buffer);
+
+    // Chuyển đổi khoảng cách thành chuỗi và hiển thị trên LCD
+    sprintf(buffer, "%3d cm    ", distance);
+    CLCD_I2C_SetCursor(&myLCD, 10, 1);
     CLCD_I2C_WriteString(&myLCD, buffer);
 
     // Delay 500ms trước khi đo lần tiếp theo
-    HAL_Delay(500);
+    HAL_Delay(300);
   }
   /* USER CODE END 3 */
 }
@@ -181,7 +188,6 @@ void SystemClock_Config(void)
   */
 static void MX_I2C1_Init(void)
 {
-
   /* USER CODE BEGIN I2C1_Init 0 */
 
   /* USER CODE END I2C1_Init 0 */
@@ -205,7 +211,6 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
-
 }
 
 /**
@@ -215,7 +220,6 @@ static void MX_I2C1_Init(void)
   */
 static void MX_TIM1_Init(void)
 {
-
   /* USER CODE BEGIN TIM1_Init 0 */
 
   /* USER CODE END TIM1_Init 0 */
@@ -264,7 +268,6 @@ static void MX_TIM1_Init(void)
   /* USER CODE BEGIN TIM1_Init 2 */
 
   /* USER CODE END TIM1_Init 2 */
-
 }
 
 /**
@@ -274,7 +277,6 @@ static void MX_TIM1_Init(void)
   */
 static void MX_TIM2_Init(void)
 {
-
   /* USER CODE BEGIN TIM2_Init 0 */
 
   /* USER CODE END TIM2_Init 0 */
@@ -309,7 +311,6 @@ static void MX_TIM2_Init(void)
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
-
 }
 
 /**
@@ -319,7 +320,6 @@ static void MX_TIM2_Init(void)
   */
 static void MX_USART2_UART_Init(void)
 {
-
   /* USER CODE BEGIN USART2_Init 0 */
 
   /* USER CODE END USART2_Init 0 */
@@ -342,7 +342,6 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
-
 }
 
 /**
@@ -394,6 +393,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
+
 #ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
