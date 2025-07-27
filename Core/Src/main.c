@@ -129,8 +129,10 @@ int main(void)
     CLCD_I2C_SetCursor(&myLCD, 10, 1);
     CLCD_I2C_WriteString(&myLCD, buffer);
 
+    led_control(object_detected, distance);
+
     // Delay 500ms trước khi đo lần tiếp theo
-    HAL_Delay(300);
+    delay_ms(100);
   }
   /* USER CODE END 3 */
 }
